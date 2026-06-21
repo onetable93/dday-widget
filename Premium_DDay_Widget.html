@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Premium D-Day Widget</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    background:#0f1115;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+.widget{
+    width:100%;
+    max-width:420px;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:28px;
+    padding:28px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.badge{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.08);
+    font-size:12px;
+    letter-spacing:.15em;
+}
+h1{
+    margin:18px 0 24px;
+    font-size:28px;
+    font-weight:700;
+}
+input{
+    width:100%;
+    margin-bottom:12px;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:#1b2028;
+    color:white;
+    font-size:15px;
+}
+button{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:15px;
+    background:white;
+    color:#111;
+    font-weight:700;
+    cursor:pointer;
+}
+.event{
+    margin-top:24px;
+    text-align:center;
+}
+.event-name{
+    color:#aeb7c2;
+    font-size:14px;
+    letter-spacing:.08em;
+}
+.dday{
+    font-size:56px;
+    font-weight:800;
+    margin:10px 0;
+}
+.countdown{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+.box{
+    background:#171b22;
+    padding:12px 8px;
+    border-radius:14px;
+}
+.num{
+    font-size:22px;
+    font-weight:700;
+}
+.label{
+    font-size:11px;
+    color:#8b95a1;
+    margin-top:4px;
+}
+.footer{
+    text-align:center;
+    margin-top:18px;
+    color:#7f8792;
+    font-size:12px;
+}
+</style>
+</head>
+<body>
+<div class="widget">
+<div class="badge">LIVE COUNTDOWN</div>
+<h1>D-Day Counter</h1>
+
+<input id="title" placeholder="예: 결혼식, 여행, 시험">
+<input id="date" type="datetime-local">
+
+<button onclick="startCountdown()">카운트 시작</button>
+
+<div class="event">
+    <div class="event-name" id="eventName">이벤트를 설정하세요</div>
+    <div class="dday" id="dday">D-DAY</div>
+
+    <div class="countdown">
+        <div class="box"><div class="num" id="days">0</div><div class="label">DAYS</div></div>
+        <div class="box"><div class="num" id="hours">0</div><div class="label">HOURS</div></div>
+        <div class="box"><div class="num" id="minutes">0</div><div class="label">MIN</div></div>
+        <div class="box"><div class="num" id="seconds">0</div><div class="label">SEC</div></div>
+    </div>
+</div>
+
+<div class="footer">네이버 블로그용 프리미엄 D-Day 위젯</div>
+</div>
+
+<script>
+let timer;
+
+function startCountdown(){
+    clearInterval(timer);
+
+    const title=document.getElementById('title').value || 'MY EVENT';
+    const target=new Date(document.getElementById('date').value);
+
+    if(isNaN(target)){
+        alert('날짜를 선택하세요.');
+        return;
+    }
+
+    document.getElementById('eventName').innerText=title;
+
+    function update(){
+        const now=new Date();
+        const diff=target-now;
+
+        const dayDiff=Math.ceil((target.setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/86400000);
+
+        if(dayDiff>0) document.getElementById('dday').innerText='D-'+dayDiff;
+        else if(dayDiff===0) document.getElementById('dday').innerText='D-DAY';
+        else document.getElementById('dday').innerText='D+'+Math.abs(dayDiff);
+
+        const remain=Math.abs(diff);
+
+        document.getElementById('days').innerText=Math.floor(remain/86400000);
+        document.getElementById('hours').innerText=Math.floor((remain%86400000)/3600000);
+        document.getElementById('minutes').innerText=Math.floor((remain%3600000)/60000);
+        document.getElementById('seconds').innerText=Math.floor((remain%60000)/1000);
+    }
+
+    update();
+    timer=setInterval(update,1000);
+}
+</script>
+</body>
+</html>
