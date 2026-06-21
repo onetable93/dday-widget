@@ -2,167 +2,294 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Premium D-Day Widget</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-Day 계산기</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
-    background:#0f1115;
-    color:#fff;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     min-height:100vh;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard",sans-serif;
+    color:white;
     padding:20px;
 }
+
 .widget{
     width:100%;
     max-width:420px;
-    background:rgba(255,255,255,.05);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:28px;
     padding:28px;
-    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    border-radius:28px;
+    backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
 }
+
 .badge{
     display:inline-block;
     padding:6px 12px;
     border-radius:999px;
     background:rgba(255,255,255,.08);
     font-size:12px;
-    letter-spacing:.15em;
+    letter-spacing:1px;
 }
+
 h1{
-    margin:18px 0 24px;
+    margin-top:18px;
+    margin-bottom:24px;
     font-size:28px;
     font-weight:700;
 }
+
+label{
+    display:block;
+    margin-bottom:8px;
+    color:#cbd5e1;
+    font-size:14px;
+}
+
 input{
     width:100%;
-    margin-bottom:12px;
     padding:14px;
     border:none;
     border-radius:14px;
-    background:#1b2028;
+    background:#1e293b;
     color:white;
     font-size:15px;
+    margin-bottom:14px;
 }
+
 button{
     width:100%;
+    padding:14px;
     border:none;
     border-radius:14px;
-    padding:15px;
-    background:white;
-    color:#111;
-    font-weight:700;
     cursor:pointer;
+    font-size:16px;
+    font-weight:700;
+    background:white;
+    color:#111827;
 }
-.event{
-    margin-top:24px;
+
+.result{
     text-align:center;
+    margin-top:28px;
 }
-.event-name{
-    color:#aeb7c2;
-    font-size:14px;
-    letter-spacing:.08em;
+
+.event{
+    color:#94a3b8;
+    margin-bottom:10px;
 }
+
 .dday{
-    font-size:56px;
+    font-size:58px;
     font-weight:800;
-    margin:10px 0;
+    margin-bottom:20px;
 }
-.countdown{
+
+.grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:10px;
-    margin-top:20px;
 }
-.box{
-    background:#171b22;
-    padding:12px 8px;
+
+.card{
+    background:rgba(255,255,255,.06);
+    padding:12px;
     border-radius:14px;
 }
+
 .num{
-    font-size:22px;
+    font-size:24px;
     font-weight:700;
 }
-.label{
+
+.unit{
     font-size:11px;
-    color:#8b95a1;
+    color:#94a3b8;
     margin-top:4px;
 }
-.footer{
-    text-align:center;
+
+.tip{
     margin-top:18px;
-    color:#7f8792;
+    text-align:center;
+    color:#94a3b8;
     font-size:12px;
 }
 </style>
 </head>
+
 <body>
+
 <div class="widget">
-<div class="badge">LIVE COUNTDOWN</div>
-<h1>D-Day Counter</h1>
 
-<input id="title" placeholder="예: 결혼식, 여행, 시험">
-<input id="date" type="datetime-local">
+<span class="badge">APPLE STYLE D-DAY</span>
 
-<button onclick="startCountdown()">카운트 시작</button>
+<h1>D-Day 계산기</h1>
 
-<div class="event">
-    <div class="event-name" id="eventName">이벤트를 설정하세요</div>
-    <div class="dday" id="dday">D-DAY</div>
+<label>이벤트명</label>
+<input id="title" placeholder="예) 결혼식, 여행, 시험">
 
-    <div class="countdown">
-        <div class="box"><div class="num" id="days">0</div><div class="label">DAYS</div></div>
-        <div class="box"><div class="num" id="hours">0</div><div class="label">HOURS</div></div>
-        <div class="box"><div class="num" id="minutes">0</div><div class="label">MIN</div></div>
-        <div class="box"><div class="num" id="seconds">0</div><div class="label">SEC</div></div>
-    </div>
+<label>목표 날짜</label>
+<input id="date" type="date">
+
+<button onclick="startCountdown()">
+계산하기
+</button>
+
+<div class="result">
+
+<div class="event" id="eventName">
+날짜를 선택하세요
 </div>
 
-<div class="footer">네이버 블로그용 프리미엄 D-Day 위젯</div>
+<div class="dday" id="dday">
+D-DAY
+</div>
+
+<div class="grid">
+
+<div class="card">
+<div class="num" id="days">0</div>
+<div class="unit">DAYS</div>
+</div>
+
+<div class="card">
+<div class="num" id="hours">0</div>
+<div class="unit">HOURS</div>
+</div>
+
+<div class="card">
+<div class="num" id="minutes">0</div>
+<div class="unit">MIN</div>
+</div>
+
+<div class="card">
+<div class="num" id="seconds">0</div>
+<div class="unit">SEC</div>
+</div>
+
+</div>
+
+<div class="tip">
+시간은 자동으로 00:00 기준 계산됩니다
+</div>
+
+</div>
+
 </div>
 
 <script>
+
 let timer;
 
 function startCountdown(){
-    clearInterval(timer);
 
-    const title=document.getElementById('title').value || 'MY EVENT';
-    const target=new Date(document.getElementById('date').value);
+clearInterval(timer);
 
-    if(isNaN(target)){
-        alert('날짜를 선택하세요.');
-        return;
-    }
+const title =
+document.getElementById('title').value || 'MY EVENT';
 
-    document.getElementById('eventName').innerText=title;
+const dateValue =
+document.getElementById('date').value;
 
-    function update(){
-        const now=new Date();
-        const diff=target-now;
+if(!dateValue){
+alert('날짜를 선택해주세요');
+return;
+}
 
-        const dayDiff=Math.ceil((target.setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/86400000);
+localStorage.setItem('ddayTitle',title);
+localStorage.setItem('ddayDate',dateValue);
 
-        if(dayDiff>0) document.getElementById('dday').innerText='D-'+dayDiff;
-        else if(dayDiff===0) document.getElementById('dday').innerText='D-DAY';
-        else document.getElementById('dday').innerText='D+'+Math.abs(dayDiff);
+run(title,dateValue);
 
-        const remain=Math.abs(diff);
+}
 
-        document.getElementById('days').innerText=Math.floor(remain/86400000);
-        document.getElementById('hours').innerText=Math.floor((remain%86400000)/3600000);
-        document.getElementById('minutes').innerText=Math.floor((remain%3600000)/60000);
-        document.getElementById('seconds').innerText=Math.floor((remain%60000)/1000);
-    }
+function run(title,dateValue){
 
-    update();
-    timer=setInterval(update,1000);
+document.getElementById('eventName').innerText = title;
+
+const target =
+new Date(dateValue + 'T00:00:00');
+
+function update(){
+
+const now = new Date();
+
+const diff = target - now;
+
+const dayDiff = Math.ceil(
+(target.setHours(0,0,0,0) -
+new Date().setHours(0,0,0,0))
+/ 86400000
+);
+
+if(dayDiff > 0){
+document.getElementById('dday').innerText =
+'D-' + dayDiff;
+}
+else if(dayDiff === 0){
+document.getElementById('dday').innerText =
+'D-DAY';
+}
+else{
+document.getElementById('dday').innerText =
+'D+' + Math.abs(dayDiff);
+}
+
+const remain = Math.abs(diff);
+
+document.getElementById('days').innerText =
+Math.floor(remain/86400000);
+
+document.getElementById('hours').innerText =
+Math.floor((remain%86400000)/3600000);
+
+document.getElementById('minutes').innerText =
+Math.floor((remain%3600000)/60000);
+
+document.getElementById('seconds').innerText =
+Math.floor((remain%60000)/1000);
+
+}
+
+update();
+
+timer = setInterval(update,1000);
+
+}
+
+window.onload = function(){
+
+const title =
+localStorage.getItem('ddayTitle');
+
+const date =
+localStorage.getItem('ddayDate');
+
+if(title && date){
+
+document.getElementById('title').value =
+title;
+
+document.getElementById('date').value =
+date;
+
+run(title,date);
+
+}
+
 }
 </script>
+
 </body>
 </html>
