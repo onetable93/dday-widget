@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Date Studio v5.0</title>
+<style>
+:root{--bg:#fff;--text:#111;--muted:#666;--card:#111;--cardtext:#fff;--line:#e8e8e8}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0b0b;--text:#fff;--muted:#aaa;--card:#fff;--cardtext:#111;--line:#2a2a2a}}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:980px;margin:auto;padding:20px}
+.hero{text-align:center;padding:30px 10px}
+.hero h1{margin:0;font-size:48px}
+.hero p{color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tab{background:var(--card);color:var(--cardtext);border:none;border-radius:18px;padding:18px;font-weight:700;cursor:pointer}
+.panel{display:none;border:1px solid var(--line);border-radius:24px;padding:20px;margin-top:18px}
+.panel.active{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+select,input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line)}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:#111;color:#fff;margin-top:10px;cursor:pointer}
+.result{text-align:center;padding:20px}
+.big{font-size:44px;font-weight:800}
+.copy{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:none}
+.recent{margin-top:20px;border:1px solid var(--line);padding:15px;border-radius:16px}
+.footer{text-align:center;color:var(--muted);margin-top:25px}
+@media(max-width:700px){.tabs{grid-template-columns:1fr 1fr}.hero h1{font-size:36px}.big{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<h1>DATE STUDIO</h1>
+<p>가장 쉽고 빠른 날짜 계산기</p>
+</div>
+
+<div class="tabs">
+<button class="tab" onclick="showTab(0)">📅 D-DAY</button>
+<button class="tab" onclick="showTab(1)">❤️ 기념일</button>
+<button class="tab" onclick="showTab(2)">🎉 100일</button>
+<button class="tab" onclick="showTab(3)">🗓️ 날짜계산</button>
+</div>
+
+<div class="panel active">
+<input id="event" placeholder="이벤트명">
+<div class="row"><select id="y"></select><select id="m"></select><select id="d"></select></div>
+<button class="btn" onclick="dday()">계산하기</button>
+<div class="result"><div id="r1" class="big">D-DAY</div></div>
+<button class="copy" onclick="copyText('r1')">📋 결과 복사</button>
+</div>
+
+<div class="panel">
+<div class="row"><select id="ay"></select><select id="am"></select><select id="ad"></select></div>
+<button class="btn" onclick="anniv()">계산하기</button>
+<div class="result"><div id="r2" class="big">0일째</div></div>
+</div>
+
+<div class="panel">
+<div class="row"><select id="hy"></select><select id="hm"></select><select id="hd"></select></div>
+<button class="btn" onclick="hundred()">계산하기</button>
+<div class="result"><div id="r3" class="big">100일 날짜</div></div>
+</div>
+
+<div class="panel">
+<div class="row"><select id="by"></select><select id="bm"></select><select id="bd"></select></div>
+<input id="plus" type="number" placeholder="더할 일수">
+<button class="btn" onclick="dateCalc()">계산하기</button>
+<div class="result"><div id="r4" class="big">결과 날짜</div></div>
+</div>
+
+<div class="recent">
+<strong>최근 계산</strong>
+<div id="recent">아직 없음</div>
+</div>
+
+<div class="footer">D‑Day 계산기 · 기념일 계산기 · 100일 계산기 · 날짜 계산기</div>
+</div>
+
+<script>
+function showTab(i){document.querySelectorAll('.panel').forEach((p,n)=>p.classList.toggle('active',n===i));}
+function fill(p){let y=document.getElementById(p+'y'),m=document.getElementById(p+'m'),d=document.getElementById(p+'d');
+for(let i=1990;i<=2050;i++) y.add(new Option(i,i));
+for(let i=1;i<=12;i++) m.add(new Option(i,i));
+for(let i=1;i<=31;i++) d.add(new Option(i,i));}
+['','a','h','b'].forEach(fill);
+
+function getDate(p){return new Date(+document.getElementById(p+'y').value,+document.getElementById(p+'m').value-1,+document.getElementById(p+'d').value);}
+function saveRecent(t){localStorage.setItem('recentCalc',t);document.getElementById('recent').innerText=t;}
+function dday(){
+let diff=Math.ceil((getDate('')-new Date())/86400000);
+let txt=(document.getElementById('event').value||'이벤트')+' '+(diff>=0?'D-'+diff:'D+'+Math.abs(diff));
+document.getElementById('r1').innerText=txt; saveRecent(txt);
+}
+function anniv(){
+let days=Math.floor((new Date()-getDate('a'))/86400000)+1;
+document.getElementById('r2').innerText='오늘은 '+days+'일째 ❤️';
+}
+function hundred(){
+let d=getDate('h'); d.setDate(d.getDate()+100);
+document.getElementById('r3').innerText=d.toLocaleDateString('ko-KR');
+}
+function dateCalc(){
+let d=getDate('b'); d.setDate(d.getDate()+Number(document.getElementById('plus').value||0));
+document.getElementById('r4').innerText=d.toLocaleDateString('ko-KR');
+}
+function copyText(id){navigator.clipboard.writeText(document.getElementById(id).innerText); alert('복사 완료');}
+window.onload=()=>{document.getElementById('recent').innerText=localStorage.getItem('recentCalc')||'아직 없음';}
+</script>
+</body></html>
