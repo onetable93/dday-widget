@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Date Studio v6 Story Edition</title>
+<style>
+:root{--bg:#f5f5f5;--text:#111;--muted:#666;--card:rgba(255,255,255,.84);--line:rgba(0,0,0,.08);--shadow:0 18px 48px rgba(0,0,0,.12);--btn:#111;--btnText:#fff}
+body.dark{--bg:#0d0d0d;--text:#f7f7f7;--muted:#b3b3b3;--card:rgba(20,20,20,.72);--line:rgba(255,255,255,.08);--shadow:0 18px 48px rgba(0,0,0,.35);--btn:#fff;--btnText:#111}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Pretendard",sans-serif;color:var(--text);background:var(--bg);background-size:cover;background-position:center;background-attachment:fixed}
+.overlay{min-height:100vh;background:linear-gradient(to bottom, rgba(255,255,255,.16), rgba(255,255,255,.08));padding:20px}
+body.dark .overlay{background:linear-gradient(to bottom, rgba(0,0,0,.18), rgba(0,0,0,.10))}
+.wrap{max-width:1080px;margin:auto}
+.hero{text-align:center;padding:32px 8px 24px}
+.eyebrow{display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(12px);box-shadow:var(--shadow);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.hero h1{margin:18px 0 10px;font-size:clamp(34px,6vw,62px);letter-spacing:-.03em}
+.hero p{margin:0 auto;max-width:720px;color:var(--muted);font-size:clamp(15px,2vw,18px);line-height:1.6}
+.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.card h2{margin:0 0 6px;font-size:28px;letter-spacing:-.03em}
+.sub{color:var(--muted);margin:0 0 18px;line-height:1.5;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.full{grid-column:1 / -1}
+label{display:block;margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:600}
+input,textarea,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.72);color:#111;border-radius:16px;padding:14px 14px;font:inherit;outline:none}
+body.dark input,body.dark textarea,body.dark select{background:rgba(255,255,255,.06);color:#fff}
+textarea{min-height:88px;resize:vertical}
+.dateRow{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px}
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{border:none;border-radius:16px;padding:14px 18px;font:inherit;font-weight:700;cursor:pointer}
+.primary{background:var(--btn);color:var(--btnText);min-width:140px}.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.55);padding:10px 14px;border-radius:999px;cursor:pointer;font-size:14px}
+body.dark .chip{background:rgba(255,255,255,.06)}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.swatch{border-radius:18px;border:1px solid var(--line);min-height:58px;cursor:pointer;position:relative;overflow:hidden}
+.swatch span{position:absolute;inset:auto 8px 8px 8px;font-size:12px;font-weight:700;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.8);color:#111}
+.preview{min-height:520px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.preview::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,.08));pointer-events:none}
+body.dark .preview::before{background:linear-gradient(to bottom, rgba(0,0,0,.22), rgba(0,0,0,.12))}
+.previewInner{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.storyTag{display:inline-flex;align-self:flex-start;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.72);color:#111;font-size:12px;font-weight:800;letter-spacing:.12em}
+body.dark .storyTag{background:rgba(255,255,255,.12);color:#fff}
+.storyCenter{text-align:center;padding:28px 6px}
+.storyTitle{font-size:clamp(24px,3.5vw,38px);font-weight:800;letter-spacing:-.03em;margin:0 0 12px}
+.storyDday{font-size:clamp(44px,7vw,82px);font-weight:900;letter-spacing:-.05em;margin:0}
+.storyDate{margin-top:12px;color:var(--muted);font-weight:600}
+.storyMemo{margin:20px auto 0;max-width:90%;font-size:17px;line-height:1.7;color:var(--text)}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.metaBox{border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.55);text-align:center}
+body.dark .metaBox{background:rgba(255,255,255,.05)}
+.metaLabel{font-size:12px;color:var(--muted);margin-bottom:8px;letter-spacing:.08em}.metaValue{font-size:20px;font-weight:800}
+.recentList{display:grid;gap:10px;margin-top:14px}
+.recentItem{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.52);cursor:pointer}
+body.dark .recentItem{background:rgba(255,255,255,.05)}
+.recentTop{font-weight:800}.recentBottom{font-size:13px;color:var(--muted);margin-top:4px}
+.footer{text-align:center;color:var(--muted);padding:26px 10px 40px;font-size:13px}
+.hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.preview{min-height:420px}}
+@media(max-width:640px){.overlay{padding:14px}.card{padding:16px;border-radius:22px}.grid{grid-template-columns:1fr}.swatches{grid-template-columns:repeat(2,1fr)}.btnRow{flex-direction:column}.btnRow button{width:100%}.storyMemo{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="overlay"><div class="wrap">
+<section class="hero">
+<div class="eyebrow">Date Studio v6 · Story Edition</div>
+<h1>당신의 날짜에 이야기를 담아보세요</h1>
+<p>단순한 D-Day 계산기가 아니라, 배경 · 문구 · 메모를 담아 각자의 소중한 날짜를 기록하는 스토리형 위젯입니다.</p>
+</section>
+
+<section class="layout">
+<div class="card">
+<h2>스토리 만들기</h2>
+<p class="sub">이벤트명, 날짜, 문구, 배경을 설정하면 오른쪽 카드가 즉시 바뀝니다.</p>
+<div class="grid">
+<div class="full"><label for="event">이벤트명</label><input id="event" placeholder="예) 결혼식, 일본 여행, 수능, 출산 예정일"></div>
+<div class="full"><label>날짜 선택</label><div class="dateRow"><select id="year"></select><select id="month"></select><select id="day"></select></div><div class="hint">모바일에서도 연도를 쉽게 바꿀 수 있도록 연 / 월 / 일을 분리했습니다.</div></div>
+<div class="full"><label for="memo">나만의 문구</label><textarea id="memo" placeholder="예) 우리의 새로운 시작, 드디어 떠난다, 반드시 해낸다"></textarea></div>
+<div class="full"><label for="submemo">메모 / 스토리 카드</label><input id="submemo" placeholder="예) 2026년 5월 3일, 오후 2시 / 후쿠오카 3박 4일 / 1차 합격 목표"></div>
+<div class="full"><label>배경 테마</label><div class="swatches">
+<button type="button" class="swatch" data-color="#ffffff" style="background:#ffffff"><span>화이트</span></button>
+<button type="button" class="swatch" data-color="#f4f1eb" style="background:#f4f1eb"><span>베이지</span></button>
+<button type="button" class="swatch" data-color="#eef4ff" style="background:#eef4ff"><span>스카이</span></button>
+<button type="button" class="swatch" data-color="#f3f3f3" style="background:#f3f3f3"><span>그레이</span></button>
+<button type="button" class="swatch" data-color="#0d0d0d" style="background:#0d0d0d"><span style="background:rgba(255,255,255,.16);color:#fff">블랙</span></button>
+</div></div>
+<div class="full"><label>빠른 배경 템플릿</label><div class="chips">
+<button type="button" class="chip" data-template="none">기본</button>
+<button type="button" class="chip" data-template="wedding">Wedding Light</button>
+<button type="button" class="chip" data-template="travel">Travel Sky</button>
+<button type="button" class="chip" data-template="study">Study Focus</button>
+<button type="button" class="chip" data-template="night">Midnight Black</button>
+</div></div>
+<div class="full"><label for="bgfile">배경 사진 업로드</label><input id="bgfile" type="file" accept="image/*"><div class="hint">여행 사진, 커플 사진, 반려동물, 풍경 등 원하는 이미지를 배경으로 사용할 수 있습니다. 업로드한 이미지는 이 브라우저에 저장됩니다.</div></div>
+<div class="full btnRow">
+<button class="primary" id="saveBtn">스토리 저장</button>
+<button class="secondary" id="copyBtn">결과 복사</button>
+<button class="secondary" id="shareBtn">링크 복사</button>
+<button class="secondary" id="resetBgBtn">배경 초기화</button>
+</div></div>
+
+<div class="card" style="margin-top:18px;padding:18px;border-radius:22px">
+<h2 style="font-size:22px">최근 계산</h2>
+<p class="sub" style="margin-bottom:10px">최근에 저장한 날짜를 다시 불러올 수 있습니다.</p>
+<div id="recentList" class="recentList"></div>
+</div>
+</div>
+
+<div class="card preview" id="previewCard">
+<div class="previewInner">
+<div class="storyTag">YOUR STORY</div>
+<div class="storyCenter">
+<h3 id="previewTitle" class="storyTitle">소중한 날짜를 기록하세요</h3>
+<p id="previewDday" class="storyDday">D-DAY</p>
+<div id="previewDate" class="storyDate">날짜를 선택하면 여기에 표시됩니다</div>
+<div id="previewMemo" class="storyMemo">나만의 문구를 입력해 감정과 의미를 함께 남겨보세요.</div>
+</div>
+<div><div class="meta">
+<div class="metaBox"><div class="metaLabel">남은 일수</div><div id="metaDays" class="metaValue">-</div></div>
+<div class="metaBox"><div class="metaLabel">기준 날짜</div><div id="metaTarget" class="metaValue" style="font-size:16px">-</div></div>
+<div class="metaBox"><div class="metaLabel">메모</div><div id="metaSubmemo" class="metaValue" style="font-size:16px">-</div></div>
+</div></div>
+</div></div>
+</section>
+
+<div class="footer">D-Day 계산기 · 기념일 계산기 · 100일 계산기 · 날짜 계산기 · 스토리형 날짜 위젯</div>
+</div></div>
+
+<script>
+const STORAGE_KEY='dateStudioV6Story',RECENT_KEY='dateStudioV6Recent',MAX_RECENTS=5;
+const eventInput=document.getElementById('event'),memoInput=document.getElementById('memo'),submemoInput=document.getElementById('submemo');
+const yearSel=document.getElementById('year'),monthSel=document.getElementById('month'),daySel=document.getElementById('day');
+const bgFileInput=document.getElementById('bgfile');
+const previewTitle=document.getElementById('previewTitle'),previewDday=document.getElementById('previewDday'),previewDate=document.getElementById('previewDate'),previewMemo=document.getElementById('previewMemo');
+const metaDays=document.getElementById('metaDays'),metaTarget=document.getElementById('metaTarget'),metaSubmemo=document.getElementById('metaSubmemo');
+function pad(n){return String(n).padStart(2,'0')}
+function initThemeBySystem(){if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.body.classList.add('dark')}
+function fillDateSelectors(){const now=new Date(),cy=now.getFullYear();for(let y=cy-30;y<=cy+30;y++)yearSel.add(new Option(`${y}년`,y));for(let m=1;m<=12;m++)monthSel.add(new Option(`${m}월`,m));updateDayOptions()}
+function updateDayOptions(){const y=parseInt(yearSel.value||new Date().getFullYear(),10),m=parseInt(monthSel.value||(new Date().getMonth()+1),10),lastDay=new Date(y,m,0).getDate(),prev=daySel.value;daySel.innerHTML='';for(let d=1;d<=lastDay;d++)daySel.add(new Option(`${d}일`,d));daySel.value=prev&&prev<=lastDay?prev:1}
+function getSelectedDate(){const y=parseInt(yearSel.value,10),m=parseInt(monthSel.value,10),d=parseInt(daySel.value,10);if(!y||!m||!d)return null;return new Date(y,m-1,d)}
+function formatDate(date){if(!date)return '-';return `${date.getFullYear()}.${pad(date.getMonth()+1)}.${pad(date.getDate())}`}
+function calcDday(target){const today=new Date();today.setHours(0,0,0,0);const t=new Date(target);t.setHours(0,0,0,0);const diff=Math.round((t-today)/86400000);if(diff>0)return{label:`D-${diff}`,days:diff};if(diff===0)return{label:'D-DAY',days:0};return{label:`D+${Math.abs(diff)}`,days:diff}}
+function getFormState(){return{event:eventInput.value.trim()||'소중한 날짜',memo:memoInput.value.trim()||'나만의 문구를 입력해 감정과 의미를 함께 남겨보세요.',submemo:submemoInput.value.trim()||'-',date:formatDate(getSelectedDate()),rawDate:{year:yearSel.value,month:monthSel.value,day:daySel.value},bgColor:document.body.dataset.bgColor||'',bgImage:document.body.dataset.bgImage||'',template:document.body.dataset.template||'none',darkMode:document.body.classList.contains('dark')}}
+function applyState(state,updatePreviewOnly=false){if(!state)return;if(!updatePreviewOnly){eventInput.value=state.event||'';memoInput.value=state.memo&&state.memo!=='나만의 문구를 입력해 감정과 의미를 함께 남겨보세요.'?state.memo:'';submemoInput.value=state.submemo&&state.submemo!=='-'?state.submemo:'';if(state.rawDate){yearSel.value=state.rawDate.year||yearSel.value;monthSel.value=state.rawDate.month||monthSel.value;updateDayOptions();daySel.value=state.rawDate.day||daySel.value}}if(state.darkMode)document.body.classList.add('dark');if(state.bgColor)setBackgroundColor(state.bgColor,false);if(state.bgImage)setBackgroundImage(state.bgImage,false);if(state.template&&state.template!=='none'&&!state.bgImage)applyTemplate(state.template,false);renderPreview()}
+function renderPreview(){const target=getSelectedDate(),state=getFormState(),result=target?calcDday(target):{label:'D-DAY',days:'-'};previewTitle.textContent=state.event;previewDday.textContent=result.label;previewDate.textContent=target?formatDate(target):'날짜를 선택하면 여기에 표시됩니다';previewMemo.textContent=state.memo;metaDays.textContent=target?(result.days>=0?`${result.days}일`:`${Math.abs(result.days)}일 경과`):'-';metaTarget.textContent=target?formatDate(target):'-';metaSubmemo.textContent=state.submemo||'-'}
+function saveCurrent(){const state=getFormState();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));let recents=[];try{recents=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]')}catch(e){}const item={id:Date.now(),event:state.event,memo:state.memo,submemo:state.submemo,date:state.date,rawDate:state.rawDate,bgColor:state.bgColor,bgImage:state.bgImage,template:state.template,darkMode:state.darkMode};recents=recents.filter(r=>!(r.event===item.event&&r.date===item.date));recents.unshift(item);recents=recents.slice(0,MAX_RECENTS);localStorage.setItem(RECENT_KEY,JSON.stringify(recents));renderRecentList();alert('스토리를 저장했어요.')}
+function renderRecentList(){const list=document.getElementById('recentList');let recents=[];try{recents=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]')}catch(e){}if(!recents.length){list.innerHTML='<div class="recentItem"><div class="recentTop">아직 저장된 스토리가 없습니다</div><div class="recentBottom">이벤트와 날짜를 입력하고 스토리 저장을 눌러보세요.</div></div>';return}list.innerHTML='';recents.forEach(item=>{const div=document.createElement('button');div.type='button';div.className='recentItem';div.innerHTML=`<div class="recentTop">${escapeHtml(item.event)}</div><div class="recentBottom">${escapeHtml(item.date)} · ${escapeHtml(item.memo||'-')}</div>`;div.addEventListener('click',()=>{applyState(item);localStorage.setItem(STORAGE_KEY,JSON.stringify(item))});list.appendChild(div)})}
+function escapeHtml(str=''){return str.replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function setBackgroundColor(color,save=true){document.body.style.backgroundImage='none';document.body.style.backgroundColor=color;document.body.dataset.bgColor=color;document.body.dataset.bgImage='';if(color.toLowerCase()==='#0d0d0d'||color.toLowerCase()==='#111111')document.body.classList.add('dark');if(save)renderPreview()}
+function setBackgroundImage(dataUrl,save=true){document.body.style.backgroundImage=`url(${dataUrl})`;document.body.dataset.bgImage=dataUrl;if(save)renderPreview()}
+function applyTemplate(name,save=true){document.body.dataset.template=name;if(name==='none')return;const map={wedding:'linear-gradient(135deg, #fffaf5 0%, #f5efe6 100%)',travel:'linear-gradient(135deg, #eef4ff 0%, #d9ebff 100%)',study:'linear-gradient(135deg, #f5f5f5 0%, #ececec 100%)',night:'linear-gradient(135deg, #111 0%, #2b2b2b 100%)'};const isDark=name==='night';document.body.style.backgroundImage=map[name]||'none';document.body.style.backgroundColor='';document.body.dataset.bgColor='';document.body.dataset.bgImage='';if(isDark)document.body.classList.add('dark');if(save)renderPreview()}
+function copyResult(){const state=getFormState(),target=getSelectedDate(),result=target?calcDday(target).label:'D-DAY';const text=`${state.event}\n${result}\n${state.date}\n${state.memo}`;navigator.clipboard.writeText(text).then(()=>alert('결과를 복사했습니다.'))}
+function copyLink(){navigator.clipboard.writeText(location.href).then(()=>alert('현재 위젯 링크를 복사했습니다.'))}
+function resetBackground(){document.body.style.backgroundImage='none';document.body.style.backgroundColor='';document.body.dataset.bgColor='';document.body.dataset.bgImage='';document.body.dataset.template='none';renderPreview()}
+function loadSaved(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(saved){applyState(saved);return}}catch(e){}const now=new Date();yearSel.value=now.getFullYear();monthSel.value=now.getMonth()+1;updateDayOptions();daySel.value=now.getDate();renderPreview()}
+yearSel.addEventListener('change',()=>{updateDayOptions();renderPreview()});monthSel.addEventListener('change',()=>{updateDayOptions();renderPreview()});daySel.addEventListener('change',renderPreview);eventInput.addEventListener('input',renderPreview);memoInput.addEventListener('input',renderPreview);submemoInput.addEventListener('input',renderPreview);
+document.querySelectorAll('.swatch').forEach(btn=>btn.addEventListener('click',()=>{setBackgroundColor(btn.dataset.color);renderPreview()}));
+document.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{const tpl=btn.dataset.template;if(tpl==='none'){resetBackground()}else{applyTemplate(tpl)}renderPreview()}));
+bgFileInput.addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){setBackgroundImage(ev.target.result);renderPreview()};reader.readAsDataURL(file)});
+document.getElementById('saveBtn').addEventListener('click',saveCurrent);document.getElementById('copyBtn').addEventListener('click',copyResult);document.getElementById('shareBtn').addEventListener('click',copyLink);document.getElementById('resetBgBtn').addEventListener('click',resetBackground);
+initThemeBySystem();fillDateSelectors();loadSaved();renderRecentList();
+</script>
+</body>
+</html>
